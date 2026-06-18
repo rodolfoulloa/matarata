@@ -65,6 +65,24 @@ class Enemy {
     isOffScreen() {
         return this.z > 1000;
     }
+
+    // Get actual screen position and size for collision
+    getScreenBounds() {
+        const depth = this.z / 1000;
+        const scale = depth * 2 + 0.3;
+        const width = this.width * scale;
+        const height = this.height * scale;
+        
+        const x = this.x + (canvas.width / 2 - this.x) * (1 - depth) * 0.1;
+        const y = this.y;
+
+        return {
+            x: x - width / 2,
+            y: y,
+            width: width,
+            height: height
+        };
+    }
 }
 
 // Spawn enemies
@@ -146,7 +164,7 @@ function updateEnemies() {
             continue;
         }
 
-        // Collision detection
+        // Collision detection with proper screen bounds
         if (checkCollision(car, enemies[i])) {
             addScore(enemies[i]);
             SoundManager.playCollect();
@@ -156,11 +174,15 @@ function updateEnemies() {
 }
 
 function checkCollision(rect1, rect2) {
+    // Get the actual screen bounds of the enemy considering perspective
+    const enemyBounds = rect2.getScreenBounds();
+    
+    // Check AABB collision
     return (
-        rect1.x < rect2.x + rect2.width &&
-        rect1.x + rect1.width > rect2.x &&
-        rect1.y < rect2.y + rect2.height &&
-        rect1.y + rect1.height > rect2.y
+        rect1.x < enemyBounds.x + enemyBounds.width &&
+        rect1.x + rect1.width > enemyBounds.x &&
+        rect1.y < enemyBounds.y + enemyBounds.height &&
+        rect1.y + rect1.height > enemyBounds.y
     );
 }
 
@@ -216,6 +238,9 @@ function draw() {
 
     // Draw HUD elements
     drawHUD();
+
+    // Debug: Draw collision boxes (uncomment to debug)
+    // drawDebugCollisionBoxes();
 }
 
 function drawPerspectiveGrid() {
@@ -347,6 +372,22 @@ function drawHUD() {
         ctx.textAlign = 'center';
         ctx.fillText(`${game.comboMultiplier}x COMBO!`, canvas.width / 2, canvas.height - 30);
     }
+}
+
+// Debug function to visualize collision boxes
+function drawDebugCollisionBoxes() {
+    // Draw car collision box
+    ctx.strokeStyle = 'rgba(0, 255, 255, 0.5)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(car.x, car.y, car.width, car.height);
+
+    // Draw enemy collision boxes
+    enemies.forEach((enemy) => {
+        const bounds = enemy.getScreenBounds();
+        ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(bounds.x, bounds.y, bounds.width, bounds.height);
+    });
 }
 
 // Game loop
