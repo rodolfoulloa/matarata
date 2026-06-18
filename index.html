@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MATARATA - Juego Retro 3D</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <div class="hud">
+            <div class="score-display">
+                <span class="label">SCORE</span>
+                <span class="value" id="score">0</span>
+            </div>
+            <div class="title">MATARATA 3D</div>
+            <div class="multiplier-display" id="multiplier"></div>
+        </div>
+
+        <canvas id="gameCanvas"></canvas>
+
+        <div class="controls">
+            <div class="key-hint">← → MOVER | SPACE PAUSA | R RESET</div>
+        </div>
+
+        <div id="pauseMenu" class="pause-menu hidden">
+            <div class="pause-content">
+                <h1>PAUSADO</h1>
+                <p>Presiona SPACE para continuar</p>
+            </div>
+        </div>
+
+        <div id="gameOver" class="game-over-screen hidden">
+            <div class="game-over-content">
+                <h1>GAME OVER</h1>
+                <p id="finalScore">Score Final: 0</p>
+                <p>Presiona R para jugar de nuevo</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+    <script src="sound.js"></script>
+</body>
+</html>
